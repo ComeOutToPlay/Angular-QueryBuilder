@@ -1,0 +1,54 @@
+{
+  "root": true,
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": ["tsconfig.json"],
+        "tsconfigRootDir": ".",
+        "sourceType": "module"
+      },
+      "extends": [
+        "airbnb-typescript/base",
+        "plugin:@angular-eslint/recommended"
+      ],
+      "plugins": [
+        "@angular-eslint/eslint-plugin", 
+        "@typescript-eslint",
+        "import"
+      ],
+      "rules": {
+        "max-len": "off",
+        "no-param-reassign": "off",
+        "no-use-before-define": "off",
+        "no-unused-vars": "off",
+        "no-underscore-dangle": "off",
+        "no-console": "off",
+        "no-useless-constructor": "off",
+        "no-empty-function": "off",
+        "import/extensions": "off",
+        "import/no-unresolved": "off",
+        "import/prefer-default-export": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "@angular-eslint/no-empty-lifecycle-method": "off",
+        "consistent-return": "off",
+        "class-methods-use-this": "off",
+        "import/no-extraneous-dependencies": ["error", {
+          "devDependencies":true,
+          "optionalDependencies": false,
+          "peerDependencies": false,
+          "packageDir": "./"
+        }],
+        "@typescript-eslint/indent": "off"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "plugins": ["@angular-eslint/template"]
+    }
+  ]
+}

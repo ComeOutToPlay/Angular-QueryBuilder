@@ -1,5 +1,5 @@
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 
@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
-import { QueryBuilderModule } from 'angular2-query-builder';
+import { QueryBuilderModule } from 'angular2-query-builder-14';
 
 @NgModule({
   imports: [
@@ -31,10 +31,10 @@ import { QueryBuilderModule } from 'angular2-query-builder';
     MatRadioModule,
     MatIconModule,
     MatCardModule,
-    QueryBuilderModule
+    QueryBuilderModule,
   ],
   declarations: [ AppComponent ],
-  bootstrap: [ AppComponent ]
+  bootstrap: [ AppComponent ],
 })
 export class AppModule {
 }

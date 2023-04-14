@@ -1,6 +1,6 @@
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Component } from '@angular/core';
-import { QueryBuilderClassNames, QueryBuilderConfig } from 'angular2-query-builder';
+import { QueryBuilderClassNames, QueryBuilderConfig } from '../../../dist/angular2-query-builder-14';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +8,22 @@ import { QueryBuilderClassNames, QueryBuilderConfig } from 'angular2-query-build
   <h2>Vanilla</h2>
   <br>
   <query-builder [formControl]='queryCtrl' [config]='currentConfig' [allowRuleset]='allowRuleset' [allowCollapse]='allowCollapse' [persistValueOnFieldChange]='persistValueOnFieldChange'>
+  <!-- Override input component for 'multiselect' type -->
+  <ng-container *queryInput="let rule; let field=field; let options=options; type: 'multiselect'">
+    <div class="qb-multiselect" >
+      <select class="q-input-control" [(ngModel)]="rule.value"
+                    [disabled]="disabled" multiple>
+          <option *ngFor="let opt of options" [ngValue]="opt.value">
+            {{opt.name}}
+          </option>
+      </select>
+    </div>
+    <div class="qb-chip-container" >
+        <div *ngFor="let opt of getSelectedOptions(options, rule.value)">
+          {{ opt }}
+      </div>
+    </div>
+  </ng-container>
     <ng-container *queryInput="let rule; type: 'textarea'; let getDisabledState=getDisabledState">
       <textarea class="text-input text-area" [(ngModel)]="rule.value" [disabled]=getDisabledState()
         placeholder="Custom Textarea"></textarea>
@@ -152,7 +168,7 @@ import { QueryBuilderClassNames, QueryBuilderConfig } from 'angular2-query-build
   </query-builder>
   `,
   styles: [`
-  /deep/ html {
+  ::slotted(html) {
     font: 14px sans-serif;
     margin: 30px;
   }
@@ -186,7 +202,43 @@ import { QueryBuilderClassNames, QueryBuilderConfig } from 'angular2-query-build
     width: 100%;
     height: 300px;
   }
-  `]
+
+  .qb-multiselect {
+    display: inline-block;
+  }
+
+  .qb-multiselect select {
+    display: inline-block;
+    padding: 5px 8px;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    width: auto;
+  }
+
+  .qb-multiselect select:disabled {
+      border-color: transparent;
+  }
+
+  .qb-chip-container {
+    display: inline-block;
+    vertical-align: top;
+  }
+  
+  .qb-chip-container div {
+    display: inline-block;
+    padding: 0 10px;
+    margin-left: 10px;
+    height: 40px;
+    font-size: 16px;
+    line-height: 40px;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+  }
+  `],
 })
 export class AppComponent {
   public queryCtrl: FormControl;
@@ -215,101 +267,123 @@ export class AppComponent {
     entityControl: 'form-control',
     entityControlSize: 'col-auto pr-0',
     inputControl: 'form-control',
-    inputControlSize: 'col-auto'
+    inputControlSize: 'col-auto',
   };
 
   public query = {
     condition: 'and',
     rules: [
-      {field: 'age', operator: '<=', entity: 'physical'},
-      {field: 'birthday', operator: '=', value: new Date(), entity: 'nonphysical'},
+      { field: 'age', operator: '<=', entity: 'physical' },
+      { field: 'birthday', operator: '=', value: new Date(), entity: 'nonphysical' },
+      { field: 'actions', operator: 'in', value: [], entity: 'physical' },
       {
         condition: 'or',
         rules: [
-          {field: 'gender', operator: '=', entity: 'physical'},
-          {field: 'occupation', operator: 'in', entity: 'nonphysical'},
-          {field: 'school', operator: 'is null', entity: 'nonphysical'},
-          {field: 'notes', operator: '=', entity: 'nonphysical'}
-        ]
-      }
-    ]
+          { field: 'gender', operator: '=', entity: 'physical' },
+          { field: 'occupation', operator: 'in', entity: 'nonphysical' },
+          { field: 'school', operator: 'is null', entity: 'nonphysical' },
+          { field: 'notes', operator: '=', entity: 'nonphysical' },
+        ],
+      },
+    ],
   };
 
   public entityConfig: QueryBuilderConfig = {
     entities: {
-      physical: {name: 'Physical Attributes'},
-      nonphysical: {name: 'Nonphysical Attributes'}
+      physical: { name: 'Physical Attributes' },
+      nonphysical: { name: 'Nonphysical Attributes' },
     },
     fields: {
-      age: {name: 'Age', type: 'number', entity: 'physical'},
+      age: { name: 'Age', type: 'number', entity: 'physical' },
       gender: {
         name: 'Gender',
         entity: 'physical',
         type: 'category',
         options: [
-          {name: 'Male', value: 'm'},
-          {name: 'Female', value: 'f'}
-        ]
+          { name: 'Male', value: 'm' },
+          { name: 'Female', value: 'f' },
+        ],
       },
-      name: {name: 'Name', type: 'string', entity: 'nonphysical'},
-      notes: {name: 'Notes', type: 'textarea', operators: ['=', '!='], entity: 'nonphysical'},
-      educated: {name: 'College Degree?', type: 'boolean', entity: 'nonphysical'},
-      birthday: {name: 'Birthday', type: 'date', operators: ['=', '<=', '>'],
-        defaultValue: (() => new Date()), entity: 'nonphysical'
+      name: { name: 'Name', type: 'string', entity: 'nonphysical' },
+      notes: { name: 'Notes', type: 'textarea', operators: ['=', '!='], entity: 'nonphysical' },
+      educated: { name: 'College Degree?', type: 'boolean', entity: 'nonphysical' },
+      birthday: { name: 'Birthday', type: 'date', operators: ['=', '<=', '>'],
+        defaultValue: (() => new Date()), entity: 'nonphysical',
       },
-      school: {name: 'School', type: 'string', nullable: true, entity: 'nonphysical'},
+      school: { name: 'School', type: 'string', nullable: true, entity: 'nonphysical' },
       occupation: {
         name: 'Occupation',
         entity: 'nonphysical',
         type: 'category',
         options: [
-          {name: 'Student', value: 'student'},
-          {name: 'Teacher', value: 'teacher'},
-          {name: 'Unemployed', value: 'unemployed'},
-          {name: 'Scientist', value: 'scientist'}
-        ]
-      }
-    }
+          { name: 'Student', value: 'student' },
+          { name: 'Teacher', value: 'teacher' },
+          { name: 'Unemployed', value: 'unemployed' },
+          { name: 'Scientist', value: 'scientist' },
+        ],
+      },
+      actions: {
+        name: 'Actions',
+        entity: 'actions',
+        type: 'list',
+        options: [
+          { name: 'View', value: 'view' },
+          { name: 'Change', value: 'change' },
+        ],
+      },
+    },
   };
 
   public config: QueryBuilderConfig = {
     fields: {
-      age: {name: 'Age', type: 'number'},
+      age: { name: 'Age', type: 'number' },
       gender: {
         name: 'Gender',
         type: 'category',
         options: [
-          {name: 'Male', value: 'm'},
-          {name: 'Female', value: 'f'}
-        ]
+          { name: 'Male', value: 'm' },
+          { name: 'Female', value: 'f' },
+        ],
       },
-      name: {name: 'Name', type: 'string'},
-      notes: {name: 'Notes', type: 'textarea', operators: ['=', '!=']},
-      educated: {name: 'College Degree?', type: 'boolean'},
-      birthday: {name: 'Birthday', type: 'date', operators: ['=', '<=', '>'],
-        defaultValue: (() => new Date())
+      name: { name: 'Name', type: 'string' },
+      notes: { name: 'Notes', type: 'textarea', operators: ['=', '!='] },
+      educated: { name: 'College Degree?', type: 'boolean' },
+      birthday: { name: 'Birthday', type: 'date', operators: ['=', '<=', '>'],
+        defaultValue: (() => new Date()),
       },
-      school: {name: 'School', type: 'string', nullable: true},
+      school: { name: 'School', type: 'string', nullable: true },
       occupation: {
         name: 'Occupation',
         type: 'category',
         options: [
-          {name: 'Student', value: 'student'},
-          {name: 'Teacher', value: 'teacher'},
-          {name: 'Unemployed', value: 'unemployed'},
-          {name: 'Scientist', value: 'scientist'}
-        ]
-      }
-    }
+          { name: 'Student', value: 'student' },
+          { name: 'Teacher', value: 'teacher' },
+          { name: 'Unemployed', value: 'unemployed' },
+          { name: 'Scientist', value: 'scientist' },
+        ],
+      },
+      actions: {
+        name: 'Actions',
+        entity: 'actions',
+        type: 'list',
+        options: [
+          { name: 'View', value: 'view' },
+          { name: 'Change', value: 'change' },
+        ],
+      },
+    },
   };
 
   public currentConfig: QueryBuilderConfig;
+
   public allowRuleset: boolean = true;
+
   public allowCollapse: boolean;
+
   public persistValueOnFieldChange: boolean = false;
 
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
   ) {
     this.queryCtrl = this.formBuilder.control(this.query);
     this.currentConfig = this.config;
@@ -321,5 +395,21 @@ export class AppComponent {
 
   changeDisabled(event: Event) {
     (<HTMLInputElement>event.target).checked ? this.queryCtrl.disable() : this.queryCtrl.enable();
+  }
+
+  getSelectedOptions(options: any, selectedValues: any) {
+    var array = [];
+
+    if (options != null && selectedValues != null) {
+      options.forEach(element => {
+        selectedValues.forEach(selectedValue => {
+  
+          if (selectedValue == element.value) {
+            array.push(element.name);
+          }
+        });
+      });
+    }
+    return array;
   }
 }

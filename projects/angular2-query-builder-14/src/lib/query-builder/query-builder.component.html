@@ -140,6 +140,12 @@
                     {{opt.name}}
                   </option>
                 </select>
+                <select [ngClass]="getClassNames('inputControl')" [(ngModel)]="rule.value" (ngModelChange)="changeInput()"
+                  [disabled]="disabled" *ngSwitchCase="'list'">
+                  <option *ngFor="let opt of getOptions(rule.field)" [ngValue]="opt.value">
+                    {{opt.name}}
+                  </option>
+                </select>
                 <ng-container *ngSwitchCase="'multiselect'">
                   <select [ngClass]="getClassNames('inputControl')" [(ngModel)]="rule.value" (ngModelChange)="changeInput()"
                     [disabled]="disabled" multiple>

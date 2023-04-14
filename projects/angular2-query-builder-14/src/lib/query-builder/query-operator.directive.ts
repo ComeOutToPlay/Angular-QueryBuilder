@@ -1,6 +1,6 @@
 import { Directive, TemplateRef } from '@angular/core';
 
-@Directive({selector: '[queryButtonGroup]'})
-export class QueryButtonGroupDirective {
+@Directive({ selector: '[queryOperator]' })
+export class QueryOperatorDirective {
   constructor(public template: TemplateRef<any>) {}
 }

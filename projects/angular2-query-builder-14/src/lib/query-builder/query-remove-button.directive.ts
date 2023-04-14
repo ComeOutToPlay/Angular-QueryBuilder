@@ -1,6 +1,6 @@
 import { Directive, TemplateRef } from '@angular/core';
 
-@Directive({selector: '[queryArrowIcon]'})
-export class QueryArrowIconDirective {
+@Directive({ selector: '[queryRemoveButton]' })
+export class QueryRemoveButtonDirective {
   constructor(public template: TemplateRef<any>) {}
 }
